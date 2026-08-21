@@ -1,99 +1,40 @@
 * { box-sizing: border-box; }
-
 html { scroll-behavior: smooth; }
-
-body {
-  margin: 0;
-  background: #070707;
-  color: #f5f5f5;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
+body { margin: 0; background: #070707; color: #f5f5f5; font-family: Arial, Helvetica, sans-serif; cursor: none; }
 a { color: inherit; text-decoration: none; }
-
 ::selection { background: #fff; color: #000; }
-
-.site {
-  min-height: 100vh;
-  overflow: hidden;
-  background:
-    radial-gradient(circle at 75% 10%, rgba(255,255,255,.08), transparent 24%),
-    radial-gradient(circle at 15% 35%, rgba(255,255,255,.04), transparent 28%),
-    #070707;
-}
-
-.nav {
-  position: fixed;
-  z-index: 20;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(92%, 1100px);
-  padding: 14px 18px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border: 1px solid rgba(255,255,255,.1);
-  border-radius: 999px;
-  background: rgba(10,10,10,.62);
-  backdrop-filter: blur(18px);
-}
-
+.site { min-height: 100vh; overflow: hidden; background: radial-gradient(circle at 75% 10%, rgba(255,255,255,.08), transparent 24%), radial-gradient(circle at 15% 35%, rgba(255,255,255,.04), transparent 28%), #070707; }
+.noise { position: fixed; inset: 0; z-index: 50; pointer-events: none; opacity: .035; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E"); }
+.cursor { position: fixed; z-index: 100; width: 18px; height: 18px; margin: -9px 0 0 -9px; border: 1px solid rgba(255,255,255,.8); border-radius: 50%; pointer-events: none; mix-blend-mode: difference; }
+.nav { position: fixed; z-index: 20; top: 20px; left: 50%; transform: translateX(-50%); width: min(92%, 1100px); padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; border: 1px solid rgba(255,255,255,.1); border-radius: 999px; background: rgba(10,10,10,.62); backdrop-filter: blur(18px); }
 .logo { font-weight: 800; letter-spacing: -.04em; }
-
 .navLinks { display: flex; gap: 24px; font-size: 13px; color: #aaa; }
 .navLinks a:hover { color: #fff; }
-
-.hero {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 140px 7vw 100px;
-  text-align: center;
-}
-
-.heroInner { max-width: 950px; }
-
-.kicker {
-  display: inline-flex;
-  padding: 8px 13px;
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 999px;
-  color: #aaa;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: .16em;
-}
-
-.title {
-  margin: 24px 0 18px;
-  font-size: clamp(58px, 10vw, 132px);
-  line-height: .86;
-  letter-spacing: -.075em;
-}
-
+.status { display: flex; align-items: center; gap: 7px; color: #888; font-size: 11px; }
+.status i { width: 6px; height: 6px; border-radius: 50%; background: #fff; box-shadow: 0 0 12px #fff; }
+.hero { position: relative; min-height: 100vh; display: grid; place-items: center; padding: 140px 7vw 100px; text-align: center; }
+.heroGlow { position: absolute; width: 480px; height: 480px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,.08), transparent 68%); filter: blur(20px); pointer-events: none; }
+.heroInner { position: relative; z-index: 2; max-width: 950px; }
+.kicker { display: inline-flex; padding: 8px 13px; border: 1px solid rgba(255,255,255,.12); border-radius: 999px; color: #aaa; font-size: 12px; text-transform: uppercase; letter-spacing: .16em; }
+.title { margin: 24px 0 18px; font-size: clamp(58px, 10vw, 132px); line-height: .86; letter-spacing: -.075em; }
 .gradient { background: linear-gradient(90deg, #fff, #777); -webkit-background-clip: text; background-clip: text; color: transparent; }
-
 .subtitle { max-width: 620px; margin: 0 auto; color: #999; line-height: 1.7; font-size: 17px; }
-
 .actions { margin-top: 34px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
-.button { padding: 13px 20px; border-radius: 999px; border: 1px solid #292929; background: #fff; color: #000; font-weight: 700; }
+.button { display: inline-block; padding: 13px 20px; border-radius: 999px; border: 1px solid #292929; background: #fff; color: #000; font-weight: 700; }
 .button.secondary { background: transparent; color: #fff; }
-
+.scrollHint { position: absolute; bottom: 30px; color: #555; font-size: 10px; letter-spacing: .2em; }
+.scrollHint span { margin-left: 8px; color: #aaa; }
 .section { width: min(1100px, 86%); margin: 0 auto; padding: 110px 0; }
 .sectionLabel { color: #777; font-size: 12px; text-transform: uppercase; letter-spacing: .18em; }
 .sectionTitle { margin: 12px 0 40px; font-size: clamp(34px, 5vw, 62px); letter-spacing: -.055em; }
-
 .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-.card { min-height: 260px; padding: 28px; border: 1px solid #1b1b1b; border-radius: 24px; background: linear-gradient(145deg, #101010, #0a0a0a); transition: transform .3s ease, border-color .3s ease; }
-.card:hover { transform: translateY(-6px); border-color: #333; }
+.card { position: relative; min-height: 260px; padding: 28px; border: 1px solid #1b1b1b; border-radius: 24px; background: linear-gradient(145deg, #101010, #0a0a0a); transition: border-color .3s ease; }
+.card:hover { border-color: #3a3a3a; }
 .card h3 { margin-top: 70px; font-size: 27px; letter-spacing: -.04em; }
 .card p { color: #888; line-height: 1.6; }
-
+.cardArrow { position: absolute; right: 26px; top: 24px; color: #666; font-size: 22px; }
+.skillCard { min-height: 180px; display: flex; flex-direction: column; justify-content: space-between; }
+.skillCard h3 { margin: 0; }
+.skillCard > span { color: #444; font-size: 12px; }
 .footer { width: min(1100px, 86%); margin: 0 auto; padding: 50px 0 70px; border-top: 1px solid #171717; color: #666; font-size: 13px; }
-
-@media (max-width: 700px) {
-  .navLinks { display: none; }
-  .grid { grid-template-columns: 1fr; }
-  .hero { padding-top: 120px; }
-}
+@media (max-width: 700px) { body { cursor: auto; } .cursor { display: none; } .navLinks { display: none; } .status { margin-left: auto; margin-right: 10px; } .grid { grid-template-columns: 1fr; } .hero { padding-top: 120px; } .heroGlow { width: 300px; height: 300px; } }
