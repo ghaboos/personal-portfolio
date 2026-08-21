@@ -1,1 +1,15 @@
-import type {Metadata} from "next";import "./globals.css";import "./dashboard.css";export const metadata:Metadata={title:{default:"Danial — Creative Developer",template:"%s — Danial"},description:"Danial's personal portfolio — projects, skills, creative work and experiments.",metadataBase:new URL(process.env.NEXT_PUBLIC_SITE_URL||"https://example.com"),openGraph:{title:"Danial — Creative Developer",description:"Projects, creative work and experiments.",type:"website"},robots:{index:true,follow:true}};export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="en"><body>{children}</body></html>}
+import type { Metadata } from "next";
+import "./globals.css";
+import "./admin/dashboard.css";
+
+export const metadata: Metadata = {
+  title: { default: "Danial — Creative Developer", template: "%s — Danial" },
+  description: "Danial's personal portfolio — projects, skills, creative work and experiments.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
+  openGraph: { title: "Danial — Creative Developer", description: "Projects, creative work and experiments.", type: "website" },
+  robots: { index: true, follow: true },
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return <html lang="en"><body>{children}</body></html>;
+}
