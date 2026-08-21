@@ -1,0 +1,2 @@
+import type {MetadataRoute} from "next";import db from "@/lib/db";
+export default function sitemap():MetadataRoute.Sitemap{const base=process.env.NEXT_PUBLIC_SITE_URL||"https://example.com";const projects:any[]=db.prepare("SELECT slug,updated_at FROM projects WHERE status='published'").all();return [{url:base,lastModified:new Date()},{url:`${base}/projects`,lastModified:new Date()},...projects.map(p=>({url:`${base}/projects/${p.slug}`,lastModified:new Date(p.updated_at)}))]}
