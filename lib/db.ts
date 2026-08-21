@@ -1,36 +1,11 @@
 import Database from "better-sqlite3";
 import path from "path";
 import fs from "fs";
-
-const dataDir = path.join(process.cwd(), "data");
-fs.mkdirSync(dataDir, { recursive: true });
-const db = new Database(path.join(dataDir, "portfolio.db"));
-db.pragma("journal_mode = WAL");
-
-db.exec(`CREATE TABLE IF NOT EXISTS projects (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  slug TEXT UNIQUE NOT NULL,
-  title TEXT NOT NULL,
-  type TEXT DEFAULT '',
-  year TEXT DEFAULT '',
-  description TEXT NOT NULL,
-  long_description TEXT DEFAULT '',
-  tags TEXT DEFAULT '[]',
-  github TEXT,
-  demo TEXT,
-  image TEXT,
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-  updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-);
-CREATE TABLE IF NOT EXISTS project_media (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  project_id INTEGER NOT NULL,
-  type TEXT NOT NULL CHECK(type IN ('image','video')),
-  url TEXT NOT NULL,
-  alt TEXT DEFAULT '',
-  sort_order INTEGER DEFAULT 0,
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE
-);`);
-
+const dataDir=path.join(process.cwd(),"data");fs.mkdirSync(dataDir,{recursive:true});
+const db=new Database(path.join(dataDir,"portfolio.db"));db.pragma("journal_mode = WAL");
+db.exec(`CREATE TABLE IF NOT EXISTS projects(id INTEGER PRIMARY KEY AUTOINCREMENT,slug TEXT UNIQUE NOT NULL,title TEXT NOT NULL,type TEXT DEFAULT '',year TEXT DEFAULT '',description TEXT NOT NULL,long_description TEXT DEFAULT '',tags TEXT DEFAULT '[]',github TEXT,demo TEXT,image TEXT,featured INTEGER DEFAULT 0,status TEXT DEFAULT 'published',seo_title TEXT DEFAULT '',seo_description TEXT DEFAULT '',created_at TEXT DEFAULT CURRENT_TIMESTAMP,updated_at TEXT DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS project_media(id INTEGER PRIMARY KEY AUTOINCREMENT,project_id INTEGER NOT NULL,type TEXT NOT NULL CHECK(type IN ('image','video')),url TEXT NOT NULL,alt TEXT DEFAULT '',sort_order INTEGER DEFAULT 0,created_at TEXT DEFAULT CURRENT_TIMESTAMP,FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE);
+CREATE TABLE IF NOT EXISTS contacts(id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT NOT NULL,email TEXT NOT NULL,subject TEXT DEFAULT '',message TEXT NOT NULL,read INTEGER DEFAULT 0,created_at TEXT DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS page_views(id INTEGER PRIMARY KEY AUTOINCREMENT,path TEXT NOT NULL,project_id INTEGER,created_at TEXT DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS site_settings(id INTEGER PRIMARY KEY CHECK(id=1),site_title TEXT DEFAULT 'Danial — Creative Developer',site_description TEXT DEFAULT '',maintenance INTEGER DEFAULT 0,updated_at TEXT DEFAULT CURRENT_TIMESTAMP);`);
 export default db;
