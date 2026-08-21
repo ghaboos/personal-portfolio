@@ -1,2 +1,3 @@
-import {NextResponse} from "next/server";import db from "@/lib/db";
+import {NextResponse} from "next/server";import db from "@/lib/db";import {cookies} from "next/headers";import {isValidSession} from "@/lib/auth";
 export async function POST(req:Request){try{const b=await req.json();if(!b.name||!b.email||!b.message)return NextResponse.json({error:"Name, email and message are required."},{status:400});db.prepare("INSERT INTO contacts(name,email,subject,message) VALUES(?,?,?,?)").run(b.name,b.email,b.subject||"",b.message);return NextResponse.json({success:true},{status:201})}catch{return NextResponse.json({error:"Unable to send message."},{status:500})}}
+export async function GET(){if(!isValidSession((await cookies()).get("admin_session")?.value))return NextResponse.json({error:"Unauthorized"},{status:401});return NextResponse.json(db.prepare("SELECT * FROM contacts ORDER BY created_at DESC LIMIT 100").all())}
