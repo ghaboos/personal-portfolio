@@ -1,0 +1,4 @@
+import {NextResponse} from "next/server";import {cookies} from "next/headers";import {isValidSession} from "@/lib/auth";import db from "@/lib/db";
+function ensure(){db.exec("CREATE TABLE IF NOT EXISTS site_settings (key TEXT PRIMARY KEY,value TEXT NOT NULL)")}
+export async function GET(){ensure();const rows=db.prepare("SELECT key,value FROM site_settings").all() as {key:string,value:string}[];return NextResponse.json(Object.fromEntries(rows.map(x=>[x.key,x.value])))}
+export async function PUT(req:Request){const token=(await cookies()).get("admin_session")?.value;if(!isValidSession(token))return NextResponse.json({error:"Unauthorized"},{status:401});ensure();const body=await req.json();const save=db.prepare("INSERT INTO site_settings(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value");const tx=db.transaction((obj:any)=>{for(const [k,v] of Object.entries(obj))save.run(k,String(v))});tx(body);return NextResponse.json({ok:true})}
