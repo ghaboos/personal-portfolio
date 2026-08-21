@@ -1,22 +1,3 @@
 "use client";
-
 import { useState } from "react";
-
-export default function AdminForm() {
-  const [form, setForm] = useState({ title: "", type: "", year: "2026", description: "", github: "", demo: "" });
-  const [status, setStatus] = useState("");
-  const update = (key: string, value: string) => setForm((v) => ({ ...v, [key]: value }));
-
-  async function submit(event: React.FormEvent) {
-    event.preventDefault();
-    setStatus("Saving...");
-    const response = await fetch("/api/projects", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
-    setStatus(response.ok ? "Project payload saved ✓" : "Something went wrong.");
-  }
-
-  return <form className="adminForm" onSubmit={submit}>
-    {(["title", "type", "year", "description", "github", "demo"] as const).map((key) => <label key={key}><span>{key}</span>{key === "description" ? <textarea required value={form[key]} onChange={(e) => update(key, e.target.value)} /> : <input required={key === "title"} value={form[key]} onChange={(e) => update(key, e.target.value)} />}</label>)}
-    <button type="submit">Save project →</button>
-    {status && <p className="formStatus">{status}</p>}
-  </form>;
-}
+export default function AdminForm(){const [form,setForm]=useState({title:"",slug:"",type:"",year:"2026",description:"",longDescription:"",tags:"",github:"",demo:"",image:""}),[status,setStatus]=useState("");const update=(k:string,v:string)=>setForm(x=>({...x,[k]:v}));async function submit(e:React.FormEvent){e.preventDefault();setStatus("Saving...");const r=await fetch("/api/projects",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...form,tags:form.tags.split(",").map(x=>x.trim()).filter(Boolean)})});setStatus(r.ok?"Project created ✓":"Could not create project.")}return <form className="adminForm" onSubmit={submit}><div className="projectFormGrid">{(["title","slug","type","year","github","demo","image"] as const).map(k=><label key={k}><span>{k}</span><input required={k==="title"} value={form[k]} onChange={e=>update(k,e.target.value)}/></label>)}<label className="wide"><span>tags</span><input value={form.tags} onChange={e=>update("tags",e.target.value)} placeholder="React, Next.js, UI"/></label><label className="wide"><span>description</span><textarea required value={form.description} onChange={e=>update("description",e.target.value)}/></label><label className="wide"><span>long description</span><textarea value={form.longDescription} onChange={e=>update("longDescription",e.target.value)}/></label></div><button type="submit">Create Project →</button>{status&&<p className="formStatus">{status}</p>}</form>}
