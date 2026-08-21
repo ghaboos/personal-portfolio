@@ -1,19 +1,2 @@
-"use client";
-import { motion } from "framer-motion";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import { projects } from "@/data/projects";
-
-type Media={id:number;type:"image"|"video";url:string;alt:string};
-
-export default function ProjectPage(){
- const {slug}=useParams<{slug:string}>(); const project=projects.find(item=>item.slug===slug)??projects[0]; const [media,setMedia]=useState<Media[]>([]);
- useEffect(()=>{fetch(`/api/projects/${encodeURIComponent(slug)}/media`).then(r=>r.ok?r.json():[]).then(setMedia)},[slug]);
- return <main className="projectDetail"><nav className="projectNav"><Link href="/projects" className="back">← Projects</Link><span>{project.type}</span><span>{project.year}</span></nav>
-  <section className="detailHero"><motion.div initial={{opacity:0,y:40}} animate={{opacity:1,y:0}} transition={{duration:.8}}><div className="sectionLabel">Project / {project.slug}</div><h1>{project.title}<span>.</span></h1><p>{project.description}</p></motion.div></section>
-  <section className="detailGrid"><div><div className="sectionLabel">01 — Overview</div><h2>Built with intent.</h2></div><div><p className="detailText">{project.longDescription}</p><div className="stack">{project.tags.map(item=><span key={item}>{item}</span>)}</div><div className="detailLinks">{project.github&&<a href={project.github}>GitHub ↗</a>}{project.demo&&<a href={project.demo}>Live Demo ↗</a>}</div></div></section>
-  {media.length>0&&<section className="mediaGallery"><div className="sectionLabel">02 — Media</div><div className="mediaMasonry">{media.map(item=>item.type==="video"?<video key={item.id} src={item.url} controls playsInline/>:<img key={item.id} src={item.url} alt={item.alt||project.title}/> )}</div></section>}
-  {media.length===0&&<div className="detailVisual">{project.image?<img src={project.image} alt={project.title}/>:<span>{project.title.toUpperCase()} / VISUAL</span>}</div>}
-  <footer className="footer"><Link href="/projects">← Back to all projects</Link></footer></main>;
-}
+import {notFound} from "next/navigation";import db from "@/lib/db";import Link from "next/link";
+export default async function ProjectPage({params}:{params:Promise<{slug:string}>}){const {slug}=await params;const p:any=db.prepare("SELECT * FROM projects WHERE slug=? AND status='published'").get(slug);if(!p)notFound();const media:any[]=db.prepare("SELECT * FROM project_media WHERE project_id=? ORDER BY sort_order,id").all(p.id);const tags=JSON.parse(p.tags||"[]");return <main className="projectDetail"><nav className="projectNav"><Link href="/projects" className="back">← Projects</Link><span>{p.type}</span><span>{p.year}</span></nav><section className="detailHero"><div><div className="sectionLabel">Project / {p.slug}</div><h1>{p.title}<span>.</span></h1><p>{p.description}</p><div className="detailLinks">{p.github&&<a href={p.github} target="_blank">GitHub ↗</a>}{p.demo&&<a href={p.demo} target="_blank">Live Demo ↗</a>}</div></div></section>{p.image&&<img className="detailVisual" src={p.image} alt={p.title}/>}<section className="detailGrid"><div><div className="sectionLabel">01 — Overview</div><h2>Built with intent.</h2></div><div><p className="detailText">{p.long_description||p.description}</p><div className="stack">{tags.map((item:string)=><span key={item}>{item}</span>)}</div></div></section>{media.length>0&&<section className="mediaGallery"><div className="sectionLabel">02 — Media</div><div className="mediaMasonry">{media.map(item=>item.type==='video'?<video key={item.id} src={item.url} controls playsInline/>:<img key={item.id} src={item.url} alt={item.alt||p.title}/>)}</div></section>}<footer className="footer"><Link href="/projects">← Back to all projects</Link></footer></main>}
