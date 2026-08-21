@@ -1,0 +1,2 @@
+import {NextResponse} from "next/server";import db from "@/lib/db";
+export async function POST(req:Request){try{const b=await req.json();if(!b.name||!b.email||!b.message)return NextResponse.json({error:"Name, email and message are required."},{status:400});db.prepare("INSERT INTO contacts(name,email,subject,message) VALUES(?,?,?,?)").run(b.name,b.email,b.subject||"",b.message);return NextResponse.json({success:true},{status:201})}catch{return NextResponse.json({error:"Unable to send message."},{status:500})}}
